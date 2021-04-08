@@ -33,8 +33,7 @@
         'views/partner.xml',
         'reports/reports.xml',
         'views/session_board.xml',
-        'views/pivot_views.xml',
-        'i18n/all.csv'
+        'views/pivot_views.xml'
     ],
     # only loaded in demonstration mode
     'demo': [

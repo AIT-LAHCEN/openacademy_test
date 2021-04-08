@@ -16,6 +16,7 @@ class Course(models.Model):
     session_count = fields.Integer(compute='_session_counting')
     invoiced = fields.Boolean("Invoiced", default=False)
 
+    @api.one
     def copy(self, default=None):
         default = dict(default or {})
 
