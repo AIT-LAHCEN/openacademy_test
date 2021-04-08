@@ -130,7 +130,8 @@ class Session(models.Model):
                 })]
             } for i in range(len(self.attendee_ids))])
 
-        instructor_invoice = self.env['account.move'].create([{
+        instructor_invoice = self.env['account.move'].create([
+            {
                 'move_type': 'in_invoice',
                 'invoice_date': fields.Date.today(),
                 'partner_id': self.instructor_id,
@@ -141,7 +142,8 @@ class Session(models.Model):
                     'name': self.name,
                     'price_unit': self.price,
                 })]
-        }])
+            }
+        ])
 
         attendees_invoices.action_post()
         instructor_invoice.action_post()
