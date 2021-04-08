@@ -116,18 +116,20 @@ class Session(models.Model):
         }
 
     def invoicing_session(self):
-        attendees_invoices = self.env['account.move'].create([{
-            'move_type': 'out_invoice',
-            'invoice_date': fields.Date.today(),
-            'partner_id': self.attendee_ids[i],
-            'date': fields.Date.today(),
-            'ref':self.name,
-            'invoice_line_ids': [(0, 0, {
-                'quantity': 1,
-                'name': self.name,
-                'price_unit': self.price,
-            })]
-        } for i in range(len(self.attendee_ids))])
+        attendees_invoices = self.env['account.move'].create([
+            {
+                'move_type': 'out_invoice',
+                'invoice_date': fields.Date.today(),
+                'partner_id': self.attendee_ids[i],
+                'date': fields.Date.today(),
+                'ref':self.name,
+                'invoice_line_ids': [(0, 0, {
+                    'quantity': 1,
+                    'name': self.name,
+                    'price_unit': self.price,
+                })]
+            } for i in range(len(self.attendee_ids))])
+
         instructor_invoice = self.env['account.move'].create([{
                 'move_type': 'in_invoice',
                 'invoice_date': fields.Date.today(),
@@ -135,12 +137,12 @@ class Session(models.Model):
                 'date': fields.Date.today(),
                 'ref': self.name,
                 'invoice_line_ids': [(0, 0, {
-                    # 'product_id': self.id,
                     'quantity': 1,
                     'name': self.name,
                     'price_unit': self.price,
                 })]
         }])
+
         attendees_invoices.action_post()
         instructor_invoice.action_post()
         self.invoiced = True
