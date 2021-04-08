@@ -80,16 +80,16 @@ class Course(models.Model):
          "The course title must be unique"),
     ]
 
-    def copy(self, default=None):
-        default = dict(default or {})
-        copied_count = self.search_count(
-            [('name', '=like', _(u"Copy of {}%").format(self.name))])
-        if not copied_count:
-            new_name = _(u"Copy of {}").format(self.name)
-        else:
-            new_name = _(u"Copy of {} ({})").format(self.name, copied_count)
-        default['name'] = new_name
-        return super(Course, self).copy(default)
+    # def copy(self, default=None):
+    #     default = dict(default or {})
+    #     copied_count = self.search_count(
+    #         [('name', '=like', _(u"Copy of {}%").format(self.name))])
+    #     if not copied_count:
+    #         new_name = _(u"Copy of {}").format(self.name)
+    #     else:
+    #         new_name = _(u"Copy of {} ({})").format(self.name, copied_count)
+    #     default['name'] = new_name
+    #     return super(Course, self).copy(default)
 
 
 class Session(models.Model):
