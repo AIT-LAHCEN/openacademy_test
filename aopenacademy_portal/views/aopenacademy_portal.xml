@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <template id="portal_sessions_menu" inherit_id="portal.portal_breadcrumbs" priority="30">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'session'" t-attf-class="breadcrumb-item #{'active ' if not session else ''}">
+                <a t-if="session" t-attf-href="/my/sessions?{{ keep_query() }}">My Sessions</a>
+                <t t-else="">My Sessions</t>
+            </li>
+            <li t-if="session" class="breadcrumb-item active">
+                <t t-esc="session.name" t-if="session.name != '/'"/>
+                <t t-else=""><em>Draft</em></t>
+            </li>
+            <li t-if="attendee_session" class="breadcrumb-item active">
+                <t t-set="extra_space" t-value=" '    '.replace(' ',u'\xa0').encode('utf-8') "/>
+                <t>
+                    <a t-attf-href="/my/sessions/#{attendee_session.id}?{{ keep_query() }}">
+                        <t t-esc="attendee_session.name"/>
+                    </a>
+                    <t t-esc="extra_space"/>/<t t-esc="extra_space"/>Attendees
+                </t>
+            </li>
+        </xpath>
+    </template>
+
+    <template id="portal_sessions" inherit_id="portal.portal_my_home" customize_show="True" priority="30">
+        <xpath expr="//div[@class='o_portal_my_home']" position="after">
+            <div class="o_portal_my_home">
+                <div class="oe_structure" id="test_1"/>
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="title">My Sessions</t>
+                    <t t-set="url" t-value="'/my/sessions'"/>
+                    <t t-set="placeholder_count" t-value="'session_count'"/>
+                </t>
+            </div>
+            <div class="oe_structure" id="test_2"/>
+        </xpath>
+    </template>
+
+    <template id="portal_sessions_list" name="Portal List">
+        <t t-call="portal.portal_layout">
+            <t t-if="not sessions">
+                <p>You don't have any sessions at the moment !!</p>
+            </t>
+            <t t-if="sessions" t-call="portal.portal_table">
+                <thead>
+                    <tr>
+                        <th>Ref.</th>
+                        <th>Name</th>
+                        <th>Course</th>
+<!--                        <th>Instructor</th>-->
+                        <th>Start Date</th>
+                        <th>Duration</th>
+                        <th>Number of Seats</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="sessions" t-as="session">
+                        <tr>
+                            <td>
+                                <a t-attf-href="/my/sessions/#{ session.id }">
+                                    <t t-esc="session.id"/>
+                                </a>
+                            </td>
+                            <td><t t-esc="session.name"/></td>
+                            <td><t t-esc="session.course_id.name"/></td>
+<!--                            <td><t t-esc="session.instructor_id.name"/></td>-->
+                            <td><t t-esc="session.start_date"/></td>
+                            <td><t t-esc="session.duration"/></td>
+                            <td><t t-esc="session.seats"/></td>
+                            <td><t t-esc="session.price"/></td>
+                        </tr>
+                    </t>
+                </tbody>
+            </t>
+        </t>
+    </template>
+
+    <template id="portal_session_attendees" name="List of attendees">
+        <t t-call="portal.portal_layout">
+            <t t-if="not attendee_session">
+                <p>No attendees at the moment !!</p>
+            </t>
+            <t t-if="attendee_session" t-call="portal.portal_table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>City</th>
+                        <th>Country</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="attendee_session.attendee_ids" t-as="attendee">
+                        <tr>
+                            <td><t t-esc="attendee.name"/></td>
+                            <td><t t-esc="attendee.email"/></td>
+                            <td><t t-esc="attendee.city"/></td>
+                            <td><t t-esc="attendee.country_id.name"/></td>
+                        </tr>
+                    </t>
+                </tbody>
+            </t>
+        </t>
+    </template>
+
+    <template id="portal_session_details" name="Portal List">
+        <t t-call="portal.portal_layout">
+            <t t-if="session" t-call="portal.portal_record_layout">
+                <t t-set="card_header">
+                    <div class="row no-gutters">
+                        <div class="col-md">
+                            <h5 class="d-flex mb-1 mb-md-0">
+                                <div class="col-11 text-truncate">
+                                    <strong class="text-right">Ref.</strong>
+                                    <strong class="text-muted "> (#<span t-field="session.id"/>)</strong>
+                                </div>
+                                <t t-if="user_id.instructor" class="col-1">
+                                    <a t-attf-href="/my/sessions/#{ session.id }/attendees">
+                                        <button class="btn btn-primary">Attendees</button>
+                                    </a>
+                                </t>
+                            </h5>
+                        </div>
+                    </div>
+                </t>
+                <t t-set="card_body">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="row mb-4">
+                                <strong class="col-lg-6">Name</strong>
+                                <span class="col-lg-6" t-field="session.name"/>
+                            </div>
+                            <div class="row mb-4">
+                                <strong class="col-lg-6">Course</strong>
+                                <span class="col-lg-6" t-field="session.course_id.name"/>
+                            </div>
+<!--                            <div class="row mb-4">-->
+<!--                                <strong class="col-lg-6">Instructor</strong>-->
+<!--                                <span class="col-lg-6" t-field="session.instructor_id.name"/>-->
+<!--                            </div>-->
+                            <div class="row mb-4">
+                                <strong class="col-lg-6">Start Date</strong>
+                                <span class="col-lg-6" t-field="session.start_date" t-options='{"widget": "date"}'/>
+                            </div>
+                            <div class="row mb-4">
+                                <strong class="col-lg-6">Duration</strong>
+                                <span class="col-lg-6" t-field="session.duration"/>
+                            </div>
+                            <div class="row mb-4">
+                                <strong class="col-lg-6">Number of Seats</strong>
+                                <span class="col-lg-6" t-field="session.seats"/>
+                            </div>
+                            <div class="row mb-4">
+                                <strong class="col-lg-6">Price</strong>
+                                <span class="col-lg-6" t-field="session.price"/>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

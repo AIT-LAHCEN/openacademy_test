@@ -1,0 +1,4 @@
+hr https://github.com/OCA/hr.git 14.0
+# enterprise git@github.com:odoo/enterprise.git 14.0
+# kzm_accounting git@github.com:karizmaconseil/kzm_accounting.git 14.0
+# kzm_hr git@github.com:karizmaconseil/kzm_hr.git 14.0
