@@ -15,7 +15,8 @@ class PortalSession(http.Controller):
             'session_count': len(sessions)
         })
 
-    @http.route(['/my/sessions/<int:session_id>'], type='http', auth="user", website=True)
+    @http.route(['/my/sessions/<int:session_id>'],
+                type='http', auth="user", website=True)
     def portal_my_invoice_detail(self, session_id):
         domain = [('id', '=', session_id)]
         session = request.env['openacademy.session'].search(domain)
@@ -24,9 +25,11 @@ class PortalSession(http.Controller):
             'page_name': 'session'
         })
 
-    @http.route(['/my/sessions/<int:session_id>/attendees'], type='http', auth="user", website=True)
+    @http.route(['/my/sessions/<int:session_id>/attendees'],
+                type='http', auth="user", website=True)
     def portal_my_session_attendees(self, session_id):
-        domain = ['&', ('instructor_id', '=', request.env.user.partner_id.id), ('id', '=', session_id)]
+        domain = ['&', ('instructor_id', '=', request.env.user.partner_id.id),
+                  ('id', '=', session_id)]
         session = request.env['openacademy.session'].sudo().search(domain)
         return request.render("aopenacademy_portal.portal_session_attendees", {
             'attendee_session': session,

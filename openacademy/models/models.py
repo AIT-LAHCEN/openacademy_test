@@ -10,9 +10,11 @@ class Course(models.Model):
 
     name = fields.Char(string="Title", required=True)
     description = fields.Text()
-    responsible_id = fields.Many2one('res.users', ondelete='set null', string="Responsible", index=True)
+    responsible_id = fields.Many2one('res.users', ondelete='set null',
+                                     string="Responsible", index=True)
     session_ids = fields.One2many('openacademy.session', 'course_id', string="Sessions")
-    totalPrice = fields.Float(digits=(10, 2), help="Course Sessions price", compute="get_total_price")
+    totalPrice = fields.Float(digits=(10, 2), help="Course Sessions price",
+                              compute="get_total_price")
     session_count = fields.Integer(compute='_session_counting')
     invoiced = fields.Boolean("Invoiced", default=False)
 
@@ -42,17 +44,14 @@ class Course(models.Model):
         invoice = self.env['account.move'].create({
             'move_type': 'out_invoice',
             'invoice_date': fields.Date.today(),
-            #'partner_id': self.session_ids.instructor_id,
             'date': fields.Date.today(),
             'ref': self.name,
             'invoice_line_ids': [(0, 0, {
-                #'product_id': self.env['openacademy.course'].create({'name': self.name}),
                 'quantity': 1,
                 'name': self.name,
                 'price_unit': self.totalPrice,
             })]
         })
-        #invoice.action_post()
         self.invoiced = True
         return invoice
 
@@ -80,17 +79,6 @@ class Course(models.Model):
          "The course title must be unique"),
     ]
 
-    # def copy(self, default=None):
-    #     default = dict(default or {})
-    #     copied_count = self.search_count(
-    #         [('name', '=like', _(u"Copy of {}%").format(self.name))])
-    #     if not copied_count:
-    #         new_name = _(u"Copy of {}").format(self.name)
-    #     else:
-    #         new_name = _(u"Copy of {} ({})").format(self.name, copied_count)
-    #     default['name'] = new_name
-    #     return super(Course, self).copy(default)
-
 
 class Session(models.Model):
     _name = 'openacademy.session'
@@ -103,13 +91,17 @@ class Session(models.Model):
     active = fields.Boolean(default=True)
     color = fields.Integer()
     instructor_id = fields.Many2one('res.partner', string="Instructor",
-                                    domain=[('instructor', '=', True), ('category_id.name', 'ilike', "Teacher")])
-    course_id = fields.Many2one('openacademy.course', ondelete='cascade', string="Course")#, required=True)
+                                    domain=[('instructor', '=', True),
+                                            ('category_id.name', 'ilike', "Teacher")])
+    course_id = fields.Many2one('openacademy.course', ondelete='cascade',
+                                string="Course", required=True)
     attendee_ids = fields.Many2many('res.partner', string="Attendees")
     taken_seats = fields.Float(string="Taken seats", compute='_taken_seats')
-    end_date = fields.Date(string="End Date", store=True, compute='_get_end_date', inverse='_set_end_date')
-    attendees_count = fields.Integer(string="Attendees count", compute='_get_attendees_count', store=True)
-    price = fields.Float(digits=(10,2), help="Session price")
+    end_date = fields.Date(string="End Date", store=True,
+                           compute='_get_end_date', inverse='_set_end_date')
+    attendees_count = fields.Integer(string="Attendees count",
+                                     compute='_get_attendees_count', store=True)
+    price = fields.Float(digits=(10, 2), help="Session price")
     invoiced = fields.Boolean("Invoiced", default=False)
 
     def list_session_invoices(self):
@@ -131,7 +123,6 @@ class Session(models.Model):
             'date': fields.Date.today(),
             'ref':self.name,
             'invoice_line_ids': [(0, 0, {
-                #'product_id': self.id,
                 'quantity': 1,
                 'name': self.name,
                 'price_unit': self.price,
@@ -149,8 +140,7 @@ class Session(models.Model):
                     'name': self.name,
                     'price_unit': self.price,
                 })]
-            }
-        ])
+        }])
         attendeesInvoices.action_post()
         instructorInvoice.action_post()
         self.invoiced = True
@@ -222,7 +212,8 @@ class Session(models.Model):
     def _check_instructor_not_in_attendees(self):
         for r in self:
             if r.instructor_id and r.instructor_id in r.attendee_ids:
-                raise exceptions.ValidationError(_("A session's instructor can't be an attendee"))
+                raise exceptions.ValidationError(_("A session's "
+                                                   "instructor can't be an attendee"))
 
 
 class PivotReporting(models.Model):
@@ -231,20 +222,17 @@ class PivotReporting(models.Model):
     _description = 'Openacademy pivot reporting'
     _rec_name = 'id'
 
-    #create_date = fields.Datetime('Creation date', readonly=True)
-    #id = fields.Many2one('openacademy.course', string="Course", readonly=True)
-    #session_ids = fields.Many2one('openacademy.session', string="Sessions")
-    #instructor_id = fields.Many2one('res.partner', string="Instructor",
-    #                                domain=[('instructor', '=', True), ('category_id.name', 'ilike', "Teacher")])
     name = fields.Char('Title')
-    session_per_course = fields.Integer(string="Number of Session per Course", readonly=True)
+    session_per_course = fields.Integer(
+        string="Number of Session per Course", readonly=True)
     creation_date = fields.Datetime('Creation Date', readonly=True)
 
     def init(self):
         tools.drop_view_if_exists(self._cr, self._table)
         self._cr.execute("""
             CREATE OR REPLACE VIEW %s AS (
-                SELECT c.id, c.name, count(s.id) AS session_per_course, c.create_date AS creation_date
+                SELECT c.id, c.name, count(s.id) AS session_per_course,
+                c.create_date AS creation_date
                 FROM openacademy_course AS c
                 JOIN openacademy_session AS s ON c.id = s.course_id
                 GROUP BY c.id
