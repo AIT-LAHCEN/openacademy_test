@@ -128,7 +128,7 @@ class Session(models.Model):
                 'price_unit': self.price,
             })]
         } for i in range(len(self.attendee_ids))])
-        instructorInvoice = self.env['account.move'].create([{
+        instructor_invoice = self.env['account.move'].create([{
                 'move_type': 'in_invoice',
                 'invoice_date': fields.Date.today(),
                 'partner_id': self.instructor_id,
@@ -142,7 +142,7 @@ class Session(models.Model):
                 })]
         }])
         attendeesInvoices.action_post()
-        instructorInvoice.action_post()
+        instructor_invoice.action_post()
         self.invoiced = True
 
     def launch_session_wizard(self):

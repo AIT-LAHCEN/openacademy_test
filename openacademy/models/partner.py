@@ -9,13 +9,13 @@ class Partner(models.Model):
     # Add a new column to the res.partner model, by default partners are not
     # instructors
     instructor = fields.Boolean("Instructor", default=False)
-    session_ids = fields.Many2many('openacademy.session', string="Attended Sessions", readonly=True)
+    session_ids = fields.Many2many('openacademy.session',
+                                   string="Attended Sessions", readonly=True)
 
     def list_courses(self):
         return {
             'name': _('Courses'),
             'domain': [],
-            #'domain': [('instructor_id', '=', self.id)],
             'view_type': 'form',
             'res_model': 'openacademy.course',
             'view_id': False,
