@@ -116,7 +116,7 @@ class Session(models.Model):
         }
 
     def invoicing_session(self):
-        attendeesInvoices = self.env['account.move'].create([{
+        attendees_invoices = self.env['account.move'].create([{
             'move_type': 'out_invoice',
             'invoice_date': fields.Date.today(),
             'partner_id': self.attendee_ids[i],
@@ -141,7 +141,7 @@ class Session(models.Model):
                     'price_unit': self.price,
                 })]
         }])
-        attendeesInvoices.action_post()
+        attendees_invoices.action_post()
         instructor_invoice.action_post()
         self.invoiced = True
 
