@@ -27,13 +27,14 @@
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
-        #'views/views.xml',
-        #'views/templates.xml',
+        'views/views.xml',
+        'views/templates.xml',
         'views/openacademy.xml',
         'views/partner.xml',
         'reports/reports.xml',
         'views/session_board.xml',
         'views/pivot_views.xml',
+        'i18n/all.csv'
     ],
     # only loaded in demonstration mode
     'demo': [

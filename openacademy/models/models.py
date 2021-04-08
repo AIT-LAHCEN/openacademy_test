@@ -69,13 +69,14 @@ class Course(models.Model):
         self.invoiced = True
         return invoice
 
+    @api.depends('session_ids')
     def get_total_price(self):
         for r in self:
-            sum = 0
+            tot = 0
             sessions = r.session_ids
             for s in sessions:
-                sum += s.price
-            r.totalPrice = sum
+                tot += s.price
+            r.totalPrice = tot
 
     @api.depends('session_ids')
     def _session_counting(self):
