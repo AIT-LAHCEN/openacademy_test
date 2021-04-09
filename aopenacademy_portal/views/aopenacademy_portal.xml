@@ -24,7 +24,7 @@
     </template>
 
     <template id="portal_sessions" inherit_id="portal.portal_my_home" customize_show="True" priority="30">
-        <xpath expr="//div[@class='o_portal_my_home']" position="after">
+        <xpath expr="//div[hasclass('o_portal_my_home')]" position="after">
             <div class="o_portal_my_home">
                 <div class="oe_structure" id="test_1"/>
                 <t t-call="portal.portal_docs_entry">

@@ -122,7 +122,7 @@ class Session(models.Model):
                 'invoice_date': fields.Date.today(),
                 'partner_id': self.attendee_ids[i],
                 'date': fields.Date.today(),
-                'ref':self.name,
+                'ref': self.name,
                 'invoice_line_ids': [(0, 0, {
                     'quantity': 1,
                     'name': self.name,
